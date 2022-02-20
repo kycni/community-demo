@@ -2,6 +2,7 @@ package com.song.community.dao.mapper;
 
 import com.song.community.entity.DiscussPost;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -23,4 +24,14 @@ public interface DiscussPostMapper {
      *     这个查询条件是用户的id
      */
     List<DiscussPost> selectDiscussPostList (int userId, int offset, int limit);
+
+    /**
+     * 查询帖子数量
+     * 1. 具体用户帖子数量
+     * 2. 全部帖子数量
+     * 只增加一个可变化的查询条件,进行动态SQL拼接
+     * @param userId
+     * @return
+     */
+    int selectDiscussPostCount(@Param("userId") int userId);
 }
