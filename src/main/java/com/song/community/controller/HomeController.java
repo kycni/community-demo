@@ -28,7 +28,7 @@ public class HomeController {
     @Autowired
     private Page page;
     
-    @RequestMapping(value = "/index", method = RequestMethod.GET)
+    @RequestMapping(path = "/index", method = RequestMethod.GET)
     public String getIndexPage (Model model, Page page) {
         
         page.setRows(discussPostService.findDiscussPostCount(0));

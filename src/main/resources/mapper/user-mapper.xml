@@ -7,10 +7,36 @@
         id, username, password, salt, email, type, status, activation_code, header_url, create_time
     </sql>
 
+    <sql id="insertFields">
+        username, password, salt, email, type, status, activation_code, header_url, create_time
+    </sql>
+
     <select id="selectUserById" resultType="User">
         select <include refid="selectFields"/>
         from user
         where id = #{id};
     </select>
+
+    <select id="selectUserByName" resultType="User">
+        select <include refid="selectFields"/>
+        from user
+        where username = #{username};
+    </select>
+
+    <select id="selectUserByEmail" resultType="User">
+        select <include refid="selectFields"/>
+        from user
+        where email = #{email};
+    </select>
     
+    <insert id="insertUser" parameterType="User" keyProperty="id">
+        insert into user (<include refid="insertFields"/>)
+        values (#{username},#{password},#{salt},#{email},#{type},#{status},#{activationCode},#{headerUrl},#{dateTime});
+    </insert>
+    
+    <update id="updateUserStatus">
+        update user
+        set status = #{status}
+        where id = #{id};
+    </update>
 </mapper>
