@@ -1,6 +1,8 @@
 package com.song.community.service;
 
+import com.song.community.dao.mapper.LoginTicketMapper;
 import com.song.community.dao.mapper.UserMapper;
+import com.song.community.entity.LoginTicket;
 import com.song.community.entity.User;
 import com.song.community.utils.CommunityConstant;
 import com.song.community.utils.CommunityUtils;
@@ -12,10 +14,9 @@ import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.util.*;
 
 /**
  * @author Kycni
@@ -25,6 +26,8 @@ import java.util.Random;
 public class UserService implements CommunityConstant {
     @Autowired
     private UserMapper userMapper;
+    @Autowired
+    private LoginTicketMapper loginTicketMapper;
     @Autowired
     private MailClient mailClient;
     @Autowired
@@ -97,7 +100,7 @@ public class UserService implements CommunityConstant {
         User user = userMapper.selectUserById(userId);
         if (user.getStatus() == 1) {
             return CommunityConstant.ACTIVATION_REPEAT;
-        } else if (user.getActivationCode() == code) {
+        } else if (Objects.equals(user.getActivationCode(), code)) {
             userMapper.updateUserStatus(userId, 1);
             return CommunityConstant.ACTIVATION_SUCCESS;
         } else {
@@ -105,6 +108,71 @@ public class UserService implements CommunityConstant {
         }
     }
     
-    
-    
+    public Map<String, Object> login (String username, String password, int expiredSeconds) {
+        HashMap<String, Object> map = new HashMap<>();
+        // 空值判断
+        if (StringUtils.isBlank(username)) {
+            map.put("usernameMsg", "用户名不能为空");
+            return map;
+        }
+        if (StringUtils.isBlank(password)) {
+            map.put("passwordMsg", "密码不能为空");
+            return map;
+        }
+        
+        // 验证用户名
+        User user = userMapper.selectUserByName(username);
+        if (user == null) {
+            map.put("usernameMsg", "用户名不存在");
+            return map;
+        }
+        // 验证账号激活状态
+        if (user.getStatus() == 0) {
+            map.put("usernameMsg", "该账号未激活");
+            return map;
+        }
+        // 验证账号密码
+        password = communityUtils.md5(password + user.getSalt());
+        if (!Objects.equals(password, user.getPassword())) {
+            map.put("passwordMsg", "密码不正确");
+            return map;
+        }
+        // 生成登录凭证
+        LoginTicket loginTicket = new LoginTicket();
+        loginTicket.setUserId(user.getId());
+        loginTicket.setTicket(communityUtils.generateUUID());
+        loginTicket.setStatus(0);
+        loginTicket.setExpired(new Date(System.currentTimeMillis() + expiredSeconds * 1000L));
+        loginTicketMapper.insertLoginTicket(loginTicket);
+        map.put("ticket", loginTicket.getTicket());
+        return map;
+    }
+    /**
+     * 退出登录功能 
+     */
+    public void logout (String ticket) {
+        loginTicketMapper.updateLoginStatus(ticket,1) ;       
+    }
+
+    /**
+     * 查找登录凭证
+     */
+    public LoginTicket findLoginTicket (String ticket) {
+        return loginTicketMapper.selectLoginTicket(ticket);
+    }
+
+    /**
+     * 更新头像功能
+     */
+    public int uploadHeader (int userId, String headerUrl) {
+        return userMapper.updateHeaderUrl(userId, headerUrl);
+    }
+
+    /**
+     * 更新密码
+     */
+    public int changePassword (int userId, String password) {
+        return userMapper.updatePassword(userId, password);
+        
+    }
 }

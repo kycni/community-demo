@@ -21,6 +21,12 @@ public class MailSenderTest {
     
     @Test
     public void sendMessage() {
-        mailClient.sendMail("coder417@sina.com", "hello,我的宝宝", "这是一封带点可爱的邮件");    
+        mailClient.sendMail("coder417@sina.com", "hello,我的宝宝", "这是一封带点可爱的邮件");
+    }
+    
+    @Test
+    public void test() {
+        String str = "lucky.png";
+        System.out.println(str.substring(str.lastIndexOf(".")));
     }
 }

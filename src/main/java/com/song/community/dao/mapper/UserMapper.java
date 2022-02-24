@@ -32,5 +32,15 @@ public interface UserMapper {
     /**
      * 更新用户激活状态
      */
-    int updateUserStatus(int userId, int status);
+    int updateUserStatus(int id, int status);
+
+    /**
+     * 更新用户头像
+     */
+    int updateHeaderUrl(int id, String headerUrl);
+
+    /**
+     * 更新密码
+     */
+    int updatePassword(int id, String password);
 }
