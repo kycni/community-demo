@@ -27,4 +27,14 @@ public interface CommunityConstant {
      * 记住我状态下有效时间
      */
     int REMEMBER_EXPIRED_SECONDS = 3600 * 24;
+
+    /**
+     * 评论帖子
+     */
+    int COMMENT_POST = 1;
+    
+    /**
+     * 评论回复
+     */
+    int COMMENT_REPLY = 2;
 }

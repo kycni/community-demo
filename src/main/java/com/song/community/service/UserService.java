@@ -38,11 +38,17 @@ public class UserService implements CommunityConstant {
     private String domain;    
     @Value("${server.servlet.context-path}")
     private String contextPath;
-    
+
+    /**
+     * 根据id查找用户 
+     */
     public User findUserById (int id) {
         return userMapper.selectUserById(id);
     }
-    
+
+    /**
+     * 注册账户
+     */
     public Map<String, Object> register (User user) {
         // 判断前端传值
         Map<String, Object> map = new HashMap<>();
@@ -93,8 +99,8 @@ public class UserService implements CommunityConstant {
     }
 
     /**
-     * 
-     * @return 集合状态
+     * 激活账户
+     * @return 激活状态
      */
     public int activation (int userId, String code) {
         User user = userMapper.selectUserById(userId);
@@ -107,7 +113,11 @@ public class UserService implements CommunityConstant {
             return CommunityConstant.ACTIVATION_FAILURE;
         }
     }
-    
+
+    /**
+     * 登录
+     * @return 登录错误信息与登录凭证
+     */
     public Map<String, Object> login (String username, String password, int expiredSeconds) {
         HashMap<String, Object> map = new HashMap<>();
         // 空值判断
@@ -148,7 +158,7 @@ public class UserService implements CommunityConstant {
         return map;
     }
     /**
-     * 退出登录功能 
+     * 退出登录
      */
     public void logout (String ticket) {
         loginTicketMapper.updateLoginStatus(ticket,1) ;       
@@ -162,7 +172,7 @@ public class UserService implements CommunityConstant {
     }
 
     /**
-     * 更新头像功能
+     * 更新头像
      */
     public int uploadHeader (int userId, String headerUrl) {
         return userMapper.updateHeaderUrl(userId, headerUrl);

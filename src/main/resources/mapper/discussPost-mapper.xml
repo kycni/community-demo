@@ -6,6 +6,9 @@
     <sql id="selectFields">
         id, user_id, title, content, type, status, create_time, comment_count, score
     </sql>
+    <sql id="insertFields">
+        user_id, title, content, type, status, create_time, comment_count, score
+    </sql>
     
     <select id="selectDiscussPostList" resultType="DiscussPost">
         select <include refid="selectFields"/>
@@ -19,12 +22,23 @@
     </select>
 
     <select id="selectDiscussPostCount" resultType="int">
-        select count(id)
+        select count(id) 
         from discuss_post
         where status != 2
         <if test="userId!=0">
             and user_id = #{userId}
         </if>
     </select>
+    
+    <select id="selectDiscussPost" resultType="DiscussPost">
+        select <include refid="selectFields"/>
+        from discuss_post
+        where id = #{id};
+    </select>
+    
+    <insert id="insertDiscussPost" parameterType="DiscussPost" keyProperty="id">
+        insert into discuss_post (<include refid="insertFields"/>) 
+        VALUES (#{userId},#{title},#{content},#{type},#{status},#{createDate},#{commentCount},#{score})
+    </insert>
     
 </mapper>

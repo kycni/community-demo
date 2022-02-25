@@ -13,11 +13,8 @@ import java.util.List;
 @Mapper
 public interface DiscussPostMapper {
     /**
-     * 动态SQL
-     * @param userId
-     * @param offset
-     * @param limit
-     * @return
+     * 查询帖子列表,带分页
+     * 动态SQL,可查全部帖子和个人发帖
      */
     List<DiscussPost> selectDiscussPostList(int userId, int offset,int limit);
     
@@ -25,5 +22,14 @@ public interface DiscussPostMapper {
      *     动态参数，如果唯一，那么我们就得加上这个标签
      */
     int selectDiscussPostCount (@Param("userId") int userId);
+
+    /**
+     * 插入帖子
+     */
+    int insertDiscussPost (DiscussPost discussPost);
     
+    /**
+     * 根据帖子id查询帖子信息
+     */
+    DiscussPost selectDiscussPost (int id);
 }

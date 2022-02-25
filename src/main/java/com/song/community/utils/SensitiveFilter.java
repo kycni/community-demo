@@ -19,12 +19,12 @@ import java.util.Map;
  */
 @Component
 public class SensitiveFilter {
-    private static Logger logger = LoggerFactory.getLogger(SensitiveFilter.class);
+    private static final Logger logger = LoggerFactory.getLogger(SensitiveFilter.class);
     private static final String REPLACEMENT = "***";
     /**
      * 定义根节点
      */
-    private TrieNode rootNode = new TrieNode();
+    private final TrieNode rootNode = new TrieNode();
 
     /**
      * 初始化敏感词文件
@@ -56,7 +56,7 @@ public class SensitiveFilter {
         // 创建一个指针，默认指向根节点
         TrieNode tempNode = rootNode;
         for (int i = 0; i < keyword.length(); i++) {
-            // 遍历关键词中字节
+            // 遍历关键词得到单个字符
             char c = keyword.charAt(i);
             TrieNode subNode = tempNode.getSubNode(c);
             // 如果没有扫描到可能的敏感词
@@ -141,9 +141,8 @@ public class SensitiveFilter {
         return !CharUtils.isAsciiAlphanumeric(c) && (c < 0x2E80 || c > 0x9FFF);
     }
     
-
     /**
-     *  定义一个前缀树结构
+     *  定义前缀树结构
      */
     private class TrieNode {
         // 终止条件

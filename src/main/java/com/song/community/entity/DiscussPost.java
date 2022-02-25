@@ -14,7 +14,16 @@ public class DiscussPost {
     private int type;
     private int status;
     private Date createDate;
+    private int commentCount;
     private Double score;
+
+    public int getCommentCount() {
+        return commentCount;
+    }
+
+    public void setCommentCount(int commentCount) {
+        this.commentCount = commentCount;
+    }
 
     public int getId() {
         return id;
@@ -90,6 +99,7 @@ public class DiscussPost {
                 ", type=" + type +
                 ", status=" + status +
                 ", createDate=" + createDate +
+                ", commentCount=" + commentCount +
                 ", score=" + score +
                 '}';
     }
