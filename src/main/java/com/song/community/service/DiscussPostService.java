@@ -58,9 +58,16 @@ public class DiscussPostService {
     }
 
     /**
-     * 通过帖子id查找发帖人id
+     * 通过帖子id查找帖子
      */
     public DiscussPost findDiscussPost (int id) {
         return discussPostMapper.selectDiscussPost(id);
+    }
+
+    /**
+     * 增加评论数
+     */
+    public int addCommentCount (int id, int commentCount) {
+        return discussPostMapper.updateCommentCount(id,commentCount);
     }
 }

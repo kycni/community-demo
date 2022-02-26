@@ -25,5 +25,10 @@ public interface CommentMapper {
      * 查询评论数
      */
     int selectCommentCountByEntity (int entityType, int entityId);
-    
+
+    /**
+     * 添加评论
+     */
+    int insertComment (Comment comment);
+
 }

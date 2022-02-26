@@ -37,4 +37,5 @@ public interface CommunityConstant {
      * 评论回复
      */
     int COMMENT_REPLY = 2;
+    
 }
