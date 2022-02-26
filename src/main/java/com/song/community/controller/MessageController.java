@@ -5,6 +5,7 @@ import com.song.community.entity.Message;
 import com.song.community.entity.User;
 import com.song.community.service.MessageService;
 import com.song.community.service.UserService;
+import com.song.community.utils.CommunityUtils;
 import com.song.community.utils.HostHolder;
 import com.song.community.utils.Page;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,11 +14,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Kycni
@@ -68,7 +67,10 @@ public class MessageController {
         }
         return "site/letter";
     }
-    
+
+    /**
+     * 私信详情页
+     */
     @RequestMapping(path = "/letter/detail/{conversationId}", method = RequestMethod.GET)
     public String getLetterDetail (@PathVariable("conversationId") String conversationId,
                                    Page page, Model model) {
@@ -88,9 +90,18 @@ public class MessageController {
         
         // 私信目标
         model.addAttribute("target", getLetterTarget(conversationId));
+        
+        // 设置已读
+        List<Integer> ids = getLetterIds(letterList);
+        if (!ids.isEmpty()) {
+            messageService.readMessage(ids);
+        }
         return "/site/letter-detail";
     }
-    
+
+    /**
+     * 得到私信目标对象 
+     */
     private User getLetterTarget (String conversationId) {
         String[] ids = conversationId.split("_");
         int id0 = Integer.parseInt(ids[0]);
@@ -100,5 +111,47 @@ public class MessageController {
         } else {
             return userService.findUserById(id1);
         }
+    }
+
+    /**
+     * 得到未读集合消息
+     */
+    private List<Integer> getLetterIds (List<Message> letterList) {
+        // 未读消息的Id 集合
+        List<Integer> ids = new ArrayList<>();
+        if (letterList != null) {
+            for (Message letter : letterList) {
+                if (hostHolder.getUser().getId() == letter.getToId() && letter.getStatus() == 0) {
+                    ids.add(letter.getId());
+                }
+            }
+        }
+        return ids;
+    }
+
+    /**
+     * 发送私信
+     */
+    @RequestMapping(path = "/letter/send", method = RequestMethod.POST)
+    @ResponseBody
+    public String sendLetter (String toName, String content) {
+        User target = userService.findUserByName(toName);
+        if (target == null) {
+            return CommunityUtils.getJSONString(1, "目标用户不存在");
+        }
+        Message message = new Message();
+        message.setFromId(hostHolder.getUser().getId());
+        message.setContent(content);
+        message.setToId(target.getId());
+        if (message.getFromId() < message.getToId()) {
+            message.setConversationId(message.getFromId() + "_" + message.getToId());
+        } else {
+            message.setConversationId(message.getToId() + "_" + message.getFromId());
+        }
+        message.setContent(content);
+        message.setCreateTime(new Date());
+        messageService.addMessage(message);
+        
+        return CommunityUtils.getJSONString(0);
     }
 }

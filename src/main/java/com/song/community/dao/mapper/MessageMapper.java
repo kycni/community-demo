@@ -35,5 +35,16 @@ public interface MessageMapper {
      * 查询当前用户的未读消息数量
      */
     int selectUnreadLetterCount (String conversationId, int userId);
+
+    /**
+     * 插入消息
+     */
+    int insertMessage (Message message);
+
+    /**
+     * 更改消息状态
+     */
+    int updateStatus (List<Integer> ids, int status);
+    
 }
 

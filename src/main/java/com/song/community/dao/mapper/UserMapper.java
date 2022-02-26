@@ -20,7 +20,7 @@ public interface UserMapper {
     User selectUserByName (String username);
 
     /**
-     * 根据用户名查询具体用户
+     * 根据邮箱查询具体用户
      */
     User selectUserByEmail (String email);
 
