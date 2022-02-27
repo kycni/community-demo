@@ -27,7 +27,7 @@ public class ServiceLogAspect {
 
     @Pointcut("execution(* com.song.community.service.*.*(..))")
     public void pointcut() {
-
+        
     }
     
     @Before("pointcut()")
