@@ -38,7 +38,7 @@
     
     <insert id="insertDiscussPost" parameterType="DiscussPost" keyProperty="id">
         insert into discuss_post (<include refid="insertFields"/>) 
-        VALUES (#{userId},#{title},#{content},#{type},#{status},#{createDate},#{commentCount},#{score})
+        VALUES (#{userId},#{title},#{content},#{type},#{status},#{createTime},#{commentCount},#{score})
     </insert>
     
     <update id="updateCommentCount">
